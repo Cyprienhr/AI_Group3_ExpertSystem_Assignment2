@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Small Business Loan Eligibility</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Loan Eligibility Checker</h2>
+      <form id="loanForm">
+        <label>Business Age (Months):</label>
+        <input type="number" id="businessAge" required />
+
+        <label>Monthly Revenue (Frw):</label>
+        <input type="number" id="revenue" required />
+
+        <label>Loan Requested (Frw):</label>
+        <input type="number" id="loanRequested" required />
+
+        <label>Collateral Provided:</label>
+        <select id="collateral">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+
+        <label>Credit Score:</label>
+        <input type="number" id="creditScore" required />
+
+        <label>Unpaid Loans:</label>
+        <select id="unpaidLoans">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+
+        <label>Default Rate (%):</label>
+        <input type="number" id="defaultRate" required />
+
+        <label>Business Registered:</label>
+        <select id="registered">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+
+        <button type="submit">Check Eligibility</button>
+      </form>
+      <p id="result"></p>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
