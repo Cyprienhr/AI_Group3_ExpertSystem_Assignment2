@@ -1,44 +1,47 @@
-document
-  .getElementById("loanForm")
-  .addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent form from refreshing the page
+document.getElementById('loanForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-    // Get form values
-    let businessAge = parseInt(document.getElementById("businessAge").value);
-    let revenue = parseInt(document.getElementById("revenue").value);
-    let loanRequested = parseInt(
-      document.getElementById("loanRequested").value
-    );
-    let collateral = document.getElementById("collateral").value === "true";
-    let creditScore = parseInt(document.getElementById("creditScore").value);
-    let unpaidLoans = document.getElementById("unpaidLoans").value === "true";
-    let defaultRate = parseFloat(document.getElementById("defaultRate").value);
-    let registered = document.getElementById("registered").value === "true";
-
-    // Prepare the request data object
-    let requestData = {
-      businessAge,
-      revenue,
-      loanRequested,
-      collateral,
-      creditScore,
-      unpaidLoans,
-      defaultRate,
-      registered,
+    const formData = {
+        business_owner: document.getElementById('businessOwner').value,
+        business_age: parseInt(document.getElementById('businessAge').value),
+        revenue: parseInt(document.getElementById('revenue').value),
+        loan_amount: parseInt(document.getElementById('loanAmount').value),
+        has_collateral: document.getElementById('hasCollateral').value === 'true',
+        credit_score: parseInt(document.getElementById('creditScore').value),
+        has_unpaid_loans: document.getElementById('hasUnpaidLoans').value === 'true',
+        default_rate: parseInt(document.getElementById('defaultRate').value),
+        is_registered: document.getElementById('isRegistered').value === 'true'
     };
 
-    // Make the POST request to check eligibility
-    fetch("http://localhost:8000/check-eligibility", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestData),
-    })
-      .then((response) => response.json()) // Parse the JSON response
-      .then((data) => {
-        // Display the result on the page
-        document.getElementById("result").textContent = `Result: ${
-          data.status
-        } - ${data.reason || data.loan_range}`;
-      })
-      .catch((error) => console.error("Error:", error)); // Log any errors
-  });
+    try {
+        const response = await fetch('http://localhost:8000/check_eligibility', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+        
+        const commonParams = new URLSearchParams({
+            name: formData.business_owner,
+            businessAge: formData.business_age,
+            revenue: formData.revenue,
+            hasCollateral: formData.has_collateral,
+            creditScore: formData.credit_score,
+            hasUnpaidLoans: formData.has_unpaid_loans,
+            defaultRate: formData.default_rate,
+            isRegistered: formData.is_registered
+        });
+        
+        if (result.eligible) {
+            window.location.href = `success.html?${commonParams}&amount=${encodeURIComponent(result.loan_amount)}`;
+        } else {
+            window.location.href = `failure.html?${commonParams}&reasons=${encodeURIComponent(result.reasons.join(','))}`;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while processing your request.');
+    }
+});
